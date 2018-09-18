@@ -23,8 +23,32 @@
 <head>
 	<title>Welcome to Herotunes</title>
 	<link rel="stylesheet" type="text/css" href="assets/css/register.css">
+
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+
+	<script src="assets/js/register.js"></script>
+
 </head>
 <body>
+	<?php
+
+	if(isset($_POST['registerButton'])) {
+		echo '<script>
+		$(document).ready(function() {
+				$("#loginForm").hide();
+				$("#registerForm").show();
+			});		
+		</script>';
+	} else {
+		echo '<script>
+		$(document).ready(function() {
+				$("#loginForm").show();
+				$("#registerForm").hide();
+			});		
+		</script>';
+	}
+
+	?>
 	
 	<div id="background">
 
@@ -37,14 +61,19 @@
 					<p>
 						<?php echo $account->getError(Constants::$loginFailed); ?>
 						<label for="loginUsername">Username:</label>
-						<input id="loginUsername" type="text" name="loginUsername" placeholder="e.g. bart" required>
+						<input id="loginUsername" type="text" name="loginUsername" placeholder="e.g. bart" value="<?php getInputValue('loginUsername') ?>" required>
 					</p>
 					<p>
 						<label for="loginPassword">Password:</label>
 						<input id="loginPassword" type="password" name="loginPassword" placeholder="Your Password" required>
 					</p>
 
-					<button type="submit" name="loginButton">Login</button>			
+					<button type="submit" name="loginButton">Login</button>	
+
+					<div class="hasAccountText">
+						<span id="hideLogin">Don't have an account yet? Signup here</span>
+					</div>
+
 				</form>
 
 				<form id="registerForm" action="register.php" method="POST">
@@ -90,10 +119,35 @@
 						<input id="password2" type="password" name="password2" placeholder="Confirm password" required>
 					</p>
 
-					<button type="submit" name="registerButton">SIGN UP</button>			
+					<button type="submit" name="registerButton">SIGN UP</button>
+
+					<div class="hasAccountText">
+						<span id="hideRegister">Already have an account? Log in here.</span>
+					</div>
+
 				</form>
 
 			</div>
+
+			 <div id="loginText">
+			 	<h1>Get great music, right now</h1>
+			 	<h2>Listen to loads of songs for free</h2>
+			 	<ul>
+			 		<li><svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px"
+     width="25" height="25"
+     viewBox="0 0 252 252"
+     style="fill:#000000;"><g fill="none" fill-rule="nonzero" stroke="none" stroke-width="1" stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="10" stroke-dasharray="" stroke-dashoffset="0" font-family="none" font-weight="none" font-size="none" text-anchor="none" style="mix-blend-mode: normal"><path d="M0,252v-252h252v252z" fill="none"></path><g fill="#07d159"><g id="surface1"><path d="M213.15821,63.53321l-123.90821,123.88769l-50.4082,-50.38769l-14.68359,15.21679l65.09179,64.5791l138.5918,-138.6123z"></path></g></g></g></svg> Discover music you'll fall in love with</li>
+			 		<li><svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px"
+     width="25" height="25"
+     viewBox="0 0 252 252"
+     style="fill:#000000;"><g fill="none" fill-rule="nonzero" stroke="none" stroke-width="1" stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="10" stroke-dasharray="" stroke-dashoffset="0" font-family="none" font-weight="none" font-size="none" text-anchor="none" style="mix-blend-mode: normal"><path d="M0,252v-252h252v252z" fill="none"></path><g fill="#07d159"><g id="surface1"><path d="M213.15821,63.53321l-123.90821,123.88769l-50.4082,-50.38769l-14.68359,15.21679l65.09179,64.5791l138.5918,-138.6123z"></path></g></g></g></svg> Create your own playlist</li>
+			 		<li><svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px"
+     width="25" height="25"
+     viewBox="0 0 252 252"
+     style="fill:#000000;"><g fill="none" fill-rule="nonzero" stroke="none" stroke-width="1" stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="10" stroke-dasharray="" stroke-dashoffset="0" font-family="none" font-weight="none" font-size="none" text-anchor="none" style="mix-blend-mode: normal"><path d="M0,252v-252h252v252z" fill="none"></path><g fill="#07d159"><g id="surface1"><path d="M213.15821,63.53321l-123.90821,123.88769l-50.4082,-50.38769l-14.68359,15.21679l65.09179,64.5791l138.5918,-138.6123z"></path></g></g></g></svg> Follow artist to keep up to date</li>
+			 	</ul>
+			 </div>
+
 		</div>
 	</div>
 

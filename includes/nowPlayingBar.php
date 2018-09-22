@@ -20,7 +20,22 @@ $jsonArray = json_encode($resultArray);
 	});
 
 	function setTrack(trackId, newPlaylist, play) {
-		audioElement.setTrack("assets/music/bensound-happiness.mp3");
+
+		$.post("includes/handlers/ajax/getSongJson.php", { songId: trackId }, function(data){
+
+			var track = JSON.parse(data);
+
+			$(".trackName span").text(track.title);
+
+			$.post("includes/handlers/ajax/getArtistJson.php", { artistId: track.artist }, function(data){
+
+				var artist = JSON.parse(data);
+				$(".artistName span").text(artist.name);
+			});
+
+			audioElement.setTrack(track.path);
+			audioElement.play();
+		});
 
 		if(play) {
 			audioElement.play();			
@@ -54,10 +69,10 @@ $jsonArray = json_encode($resultArray);
 
 				<div class="trackInfo">
 					<span class="trackName">
-						<span>Killshot</span>
+						<span></span>
 					</span>
 					<span class="artistName">
-						<span>Eminem</span>
+						<span></span>
 					</span>
 				</div>
 

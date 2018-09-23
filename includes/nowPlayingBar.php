@@ -17,11 +17,107 @@ $jsonArray = json_encode($resultArray);
 		currentPlaylist = <?php echo $jsonArray ?>;
 		audioElement = new Audio();
 		setTrack(currentPlaylist[0], currentPlaylist, false);
+		updateVolumeProgressBar(audioElement.audio);
+
+		$("#nowPlayingBarContainer").on("mousedown touchstart mousemove touchmove", function(e){
+			e.preventDefault();
+		});
+
+		$(".playbackBar .progressBar").mousedown(function() {
+			mouseDown = true;
+		});
+
+		$(".playbackBar .progressBar").mousemove(function(e) {
+			if(mouseDown) {
+				timeFromOffset(e, this);
+			}
+		});
+
+		$(".playbackBar .progressBar").mouseup(function(e) {
+			timeFromOffset(e, this);
+		});
+
+		// Volume Bar
+
+		$(".volumeBar .progressBar").mousedown(function() {
+			mouseDown = true;
+		});
+
+		$(".volumeBar .progressBar").mousemove(function(e) {
+			if(mouseDown) {
+
+				var percentage = e.offsetX / $(this).width();
+
+				if(percentage >= 0 && percentage <= 1) {
+					audioElement.audio.volume = percentage;
+				}
+			}
+		});
+
+		$(".volumeBar .progressBar").mouseup(function(e) {
+				var percentage = e.offsetX / $(this).width();
+
+				if(percentage >= 0 && percentage <= 1) {
+					audioElement.audio.volume = percentage;
+				}
+		});
+
+
+
+
+		$(document).mouseup(function() {
+			mouseDown = false;
+		});
+
 	});
+
+	function timeFromOffset(mouse, progressBar) {
+		var percentage = mouse.offsetX / $(progressBar).width() * 100;
+		var seconds = audioElement.audio.duration * (percentage / 100);
+		audioElement.setTime(seconds);
+	}
+
+	function prevSong() {
+		if(audioElement.audio.currentTime >= 3 || currentIndex == 0) {
+			audioElement.setTime(0);
+		} else {
+			currentIndex = currentIndex - 1;
+			setTrack(currentPlaylist[currentIndex], currentPlaylist, true);
+		}
+	}
+
+	function nextSong() {
+
+		if(repeat == true) {
+			audioElement.setTime(0);
+			playSong();
+			return;
+		} 
+
+		if(currentIndex == currentPlaylist.length -1) {
+			currentIndex = 0;
+		} else {
+			currentIndex++;
+		}
+
+		var trackToPlay = currentPlaylist[currentIndex];
+		setTrack(trackToPlay, currentPlaylist, true);
+	}
+
+	function setRepeat() {
+		repeat = !repeat;
+		var imageName = repeat ? "repeat-active.png" : "repeat.png";
+		$(".controlButton.repeat img").attr("src", "assets/images/icons/" + imageName);
+	}
 
 	function setTrack(trackId, newPlaylist, play) {
 
+		currentIndex = currentPlaylist.indexOf(trackId);
+		pauseSong();
+
+
 		$.post("includes/handlers/ajax/getSongJson.php", { songId: trackId }, function(data){
+
 
 			var track = JSON.parse(data);
 
@@ -33,8 +129,14 @@ $jsonArray = json_encode($resultArray);
 				$(".artistName span").text(artist.name);
 			});
 
-			audioElement.setTrack(track.path);
-			audioElement.play();
+			$.post("includes/handlers/ajax/getAlbumJson.php", { albumId: track.album }, function(data){
+
+				var album = JSON.parse(data);
+				$(".albumLink img").attr("src", album.artworkPath);
+			});
+
+			audioElement.setTrack(track);
+			playSong();
 		});
 
 		if(play) {
@@ -44,6 +146,11 @@ $jsonArray = json_encode($resultArray);
 	}
 
 	function playSong() {
+
+		if(audioElement.audio.currentTime == 0) {
+			$.post("includes/handlers/ajax/updatePlays.php", { songId: audioElement.currentlyPlaying.id });
+		}
+
 		$(".controlButton.play").hide();
 		$(".controlButton.pause").show();
 		audioElement.play();
@@ -64,7 +171,7 @@ $jsonArray = json_encode($resultArray);
 		<div id="nowPlayingLeft">
 			<div class="content">
 				<span class="albumLink">
-					<img src="https://pbs.twimg.com/profile_images/846659478120366082/K-kZVvT8_400x400.jpg" class="albumArtwork">
+					<img src="" class="albumArtwork">
 				</span>
 
 				<div class="trackInfo">
@@ -89,7 +196,7 @@ $jsonArray = json_encode($resultArray);
 						<img src="assets/images/icons/shuffle.png" alt="Shuffle">
 					</button>
 
-					<button class="controlButton previous" title="Previous button">
+					<button class="controlButton previous" title="Previous button" onclick="prevSong();">
 						<img src="assets/images/icons/previous.png" alt="Previous">
 					</button>
 
@@ -101,11 +208,11 @@ $jsonArray = json_encode($resultArray);
 						<img src="assets/images/icons/pause.png" alt="Pause">
 					</button>
 
-					<button class="controlButton next" title="Next button">
+					<button class="controlButton next" title="Next button" onclick="nextSong()">
 						<img src="assets/images/icons/next.png" alt="Next">
 					</button>
 
-					<button class="controlButton repeat" title="Repeat button">
+					<button class="controlButton repeat" title="Repeat button" onclick="setRepeat();">
 						<img src="assets/images/icons/repeat.png" alt="Repeat">
 					</button>
 

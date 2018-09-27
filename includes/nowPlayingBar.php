@@ -176,11 +176,12 @@ $jsonArray = json_encode($resultArray);
 			});
 
 			audioElement.setTrack(track);
-		});
 
-		if(play == true) {
-			audioElement.play();			
-		}
+			if(play == true) {
+				playSong();			
+			}
+
+		});
 
 	}
 

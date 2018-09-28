@@ -19,9 +19,9 @@ if(isset($_SESSION['userLoggedIn'])) {
 <html>
 <head>
 	<title>Welcome to Herotunes</title>
-	<link rel="stylesheet" type="text/css" href="assets/css/style.css">
+	<link rel="stylesheet" type="text/css" href="assets/css/style3.css">
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-	<script src="assets/js/script.js"></script>
+	<script src="assets/js/script1.js"></script>
 </head>
 <body>
 
